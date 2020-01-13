@@ -10,11 +10,6 @@ func _ready():
 	dungeon = dungeon_generation.generate(0)
 	load_map()
 
-func _process(delta):
-	randomize()
-	dungeon = dungeon_generation.generate(rand_range(-1000, 1000))
-	load_map()
-
 func load_map():
 	for i in range(0, map_node.get_child_count()):
 		map_node.get_child(i).queue_free()
