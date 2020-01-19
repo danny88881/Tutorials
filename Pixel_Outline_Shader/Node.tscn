@@ -1,0 +1,55 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://adventurer-run-00.png" type="Texture" id=1]
+[ext_resource path="res://adventurer-run-01.png" type="Texture" id=2]
+[ext_resource path="res://adventurer-run-02.png" type="Texture" id=3]
+[ext_resource path="res://adventurer-run-03.png" type="Texture" id=4]
+[ext_resource path="res://adventurer-run-04.png" type="Texture" id=5]
+[ext_resource path="res://adventurer-run-05.png" type="Texture" id=6]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform vec4 outline_color : hint_color;
+
+void fragment(){
+	float size_x = 1.0/float(textureSize(TEXTURE, 0).x);
+	float size_y = 1.0/float(textureSize(TEXTURE, 0).y);
+	vec4 sprite_color = texture(TEXTURE, UV);
+	float alpha = -4.0 * sprite_color.a;
+	alpha += texture(TEXTURE, UV + vec2(size_x, 0)).a;
+	alpha += texture(TEXTURE, UV + vec2(-size_x, 0)).a;
+	alpha += texture(TEXTURE, UV + vec2(0, size_y)).a;
+	alpha += texture(TEXTURE, UV + vec2(0, -size_y)).a;
+	//For outlining corners
+	//Change the -4.0 to -8.0 in alpa if adding these lines
+	/*alpha += texture(TEXTURE, UV + vec2(size_x, size_y)).a;
+	alpha += texture(TEXTURE, UV + vec2(-size_x, size_y)).a;
+	alpha += texture(TEXTURE, UV + vec2(-size_x, -size_y)).a;
+	alpha += texture(TEXTURE, UV + vec2(size_x, -size_y)).a;*/
+	vec4 final_color = mix(sprite_color, outline_color, clamp(alpha, 0.0, 1.0));
+	COLOR = vec4(final_color.rgb, clamp(abs(alpha) + sprite_color.a, 0.0, 1.0));
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/outline_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ) ],
+"loop": true,
+"name": "default",
+"speed": 8.0
+} ]
+
+[node name="Node" type="Node2D"]
+position = Vector2( 142.802, 82.0774 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+material = SubResource( 2 )
+position = Vector2( 59.7027, 49.8627 )
+frames = SubResource( 3 )
+frame = 3
+playing = true
+
